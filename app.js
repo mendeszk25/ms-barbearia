@@ -26,16 +26,84 @@ document.querySelectorAll('.cut-thumb').forEach(btn=>btn.addEventListener('click
 document.querySelector('#lightboxClose').addEventListener('click',()=>lightbox.close());
 lightbox.addEventListener('click',e=>{if(e.target===lightbox)lightbox.close()});
 
-const menuToggle=document.querySelector('#mobileMenuToggle'), mobileMenu=document.querySelector('#mobileMenu');
-function setMobileMenu(open){
+const menuToggle=document.querySelector('#mobileMenuToggle'), mobileMenu=document.querySelector('#mobileMenu'), mobileMenuBackdrop=document.querySelector('#mobileMenuBackdrop'), mobileBookIcon=document.querySelector('.mobile-book-icon');
+let mobileMenuScrollY=0;
+let mobileMenuWasOpen=false;
+
+function mobileMenuFocusable(){
+  return [mobileBookIcon,menuToggle,...mobileMenu.querySelectorAll('a[href],button:not([disabled])')].filter(Boolean).filter(el=>el.offsetParent!==null);
+}
+function lockMobileMenuScroll(){
+  mobileMenuScrollY=window.scrollY;
+  document.body.style.position='fixed';
+  document.body.style.top=`-${mobileMenuScrollY}px`;
+  document.body.style.left='0';
+  document.body.style.right='0';
+  document.body.style.width='100%';
+  document.documentElement.classList.add('mobile-menu-open');
+}
+function unlockMobileMenuScroll(){
+  document.body.style.position='';
+  document.body.style.top='';
+  document.body.style.left='';
+  document.body.style.right='';
+  document.body.style.width='';
+  document.documentElement.classList.remove('mobile-menu-open');
+  window.scrollTo(0,mobileMenuScrollY);
+}
+function setMobileMenu(open,{restoreFocus=false}={}){
+  if(open===mobileMenu.classList.contains('open'))return;
   mobileMenu.classList.toggle('open',open);
+  mobileMenuBackdrop?.classList.toggle('open',open);
   menuToggle.classList.toggle('is-open',open);
   menuToggle.setAttribute('aria-expanded',String(open));
   menuToggle.setAttribute('aria-label',open?'Fechar menu':'Abrir menu');
+  mobileMenu.setAttribute('aria-hidden',String(!open));
+  mobileMenuBackdrop?.setAttribute('aria-hidden',String(!open));
+  mobileMenuWasOpen=open;
+  if(open){
+    lockMobileMenuScroll();
+    requestAnimationFrame(()=>mobileMenu.querySelector('.mobile-menu-link')?.focus({preventScroll:true}));
+  }else{
+    unlockMobileMenuScroll();
+    if(restoreFocus)requestAnimationFrame(()=>menuToggle.focus({preventScroll:true}));
+  }
 }
-menuToggle.setAttribute('aria-expanded','false');
-menuToggle.addEventListener('click',()=>setMobileMenu(!mobileMenu.classList.contains('open')));
+menuToggle.addEventListener('click',()=>setMobileMenu(!mobileMenu.classList.contains('open'),{restoreFocus:true}));
+mobileMenuBackdrop?.addEventListener('click',()=>setMobileMenu(false,{restoreFocus:true}));
 mobileMenu.querySelectorAll('a,button').forEach(el=>el.addEventListener('click',()=>setMobileMenu(false)));
+
+document.addEventListener('keydown',e=>{
+  if(!mobileMenu.classList.contains('open'))return;
+  if(e.key==='Escape'){
+    e.preventDefault();
+    setMobileMenu(false,{restoreFocus:true});
+    return;
+  }
+  if(e.key!=='Tab')return;
+  const focusable=mobileMenuFocusable();
+  if(!focusable.length)return;
+  const first=focusable[0],last=focusable[focusable.length-1];
+  if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}
+  else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}
+});
+
+function updateMobileMenuActive(sectionId){
+  mobileMenu.querySelectorAll('[data-menu-section]').forEach(link=>{
+    const active=link.dataset.menuSection===sectionId;
+    link.classList.toggle('is-active',active);
+    if(active)link.setAttribute('aria-current','page'); else link.removeAttribute('aria-current');
+  });
+}
+const mobileSections=[...document.querySelectorAll('#inicio,#servicos,#trabalhos,#localizacao')];
+if('IntersectionObserver' in window&&mobileSections.length){
+  const mobileNavObserver=new IntersectionObserver(entries=>{
+    const visible=entries.filter(entry=>entry.isIntersecting).sort((a,b)=>b.intersectionRatio-a.intersectionRatio)[0];
+    if(visible)updateMobileMenuActive(visible.target.id);
+  },{rootMargin:'-18% 0px -62% 0px',threshold:[0,.15,.35,.6]});
+  mobileSections.forEach(section=>mobileNavObserver.observe(section));
+}
+window.addEventListener('resize',()=>{if(window.innerWidth>820&&mobileMenu.classList.contains('open'))setMobileMenu(false)});
 
 const bookingModal=document.querySelector('#bookingModal');
 document.querySelectorAll('[data-open-booking]').forEach(el=>el.addEventListener('click',()=>{state.step=1;if(!bookingModal.open)bookingModal.showModal();render()}));

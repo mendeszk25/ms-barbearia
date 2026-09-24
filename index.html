@@ -52,11 +52,29 @@
         <a class="icon-link" href="https://instagram.com/msbarbearia.oficiall" target="_blank" rel="noreferrer" aria-label="Instagram"><svg><use href="#i-instagram"/></svg></a>
         <button class="icon-link whatsapp-link" type="button" aria-label="WhatsApp" title="WhatsApp ainda não configurado"><svg><use href="#i-whatsapp"/></svg></button>
         <button class="mobile-book-icon" type="button" data-open-booking aria-label="Agendar horário"><svg><use href="#i-calendar"/></svg></button>
-        <button class="mobile-menu-toggle" id="mobileMenuToggle" type="button" aria-label="Abrir menu"><span></span><span></span><span></span></button>
+        <button class="mobile-menu-toggle" id="mobileMenuToggle" type="button" aria-label="Abrir menu" aria-controls="mobileMenu" aria-expanded="false"><span></span><span></span><span></span></button>
       </div>
     </div>
-    <div class="mobile-menu" id="mobileMenu">
-      <a href="#inicio">Início</a><a href="#servicos">Serviços</a><a href="#trabalhos">Trabalhos</a><button type="button" data-open-booking>Agendamento</button><a href="#localizacao">Localização</a>
+    <div class="mobile-menu-backdrop" id="mobileMenuBackdrop" aria-hidden="true"></div>
+    <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
+      <div class="mobile-menu-inner">
+        <div class="mobile-menu-kicker"><span>MENU</span><i></i><small>MS BARBEARIA</small></div>
+        <nav class="mobile-menu-nav" aria-label="Navegação mobile">
+          <a class="mobile-menu-link is-active" href="#inicio" data-menu-section="inicio"><span class="mobile-menu-index">01</span><strong>Início</strong><svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
+          <a class="mobile-menu-link" href="#servicos" data-menu-section="servicos"><span class="mobile-menu-index">02</span><strong>Serviços</strong><svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
+          <a class="mobile-menu-link" href="#trabalhos" data-menu-section="trabalhos"><span class="mobile-menu-index">03</span><strong>Trabalhos</strong><svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
+          <button class="mobile-menu-link" type="button" data-open-booking><span class="mobile-menu-index">04</span><strong>Agendamento</strong><svg aria-hidden="true"><use href="#i-arrow"/></svg></button>
+          <a class="mobile-menu-link" href="#localizacao" data-menu-section="localizacao"><span class="mobile-menu-index">05</span><strong>Localização</strong><svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
+        </nav>
+        <div class="mobile-menu-actions">
+          <button class="button button-primary mobile-menu-cta" type="button" data-open-booking><svg><use href="#i-calendar"/></svg><span>Agendar horário</span><svg class="arrow"><use href="#i-arrow"/></svg></button>
+          <div class="mobile-menu-socials">
+            <a class="mobile-menu-social" href="https://instagram.com/msbarbearia.oficiall" target="_blank" rel="noreferrer"><svg><use href="#i-instagram"/></svg><span>Instagram</span></a>
+            <button class="mobile-menu-social whatsapp-link" type="button" title="WhatsApp ainda não configurado"><svg><use href="#i-whatsapp"/></svg><span>WhatsApp</span></button>
+          </div>
+          <div class="mobile-menu-signature" aria-hidden="true"><i></i><span>CORTE É ATITUDE</span><i></i></div>
+        </div>
+      </div>
     </div>
   </header>
 
