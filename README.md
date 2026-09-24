@@ -1,15 +1,23 @@
 # MS Barbearia
 
-Redesign visual baseado na referência fornecida, preservando a identidade e os dados reais disponíveis do projeto.
+Site oficial da MS Barbearia com layout desktop/mobile, galeria real, animações editoriais e fluxo de agendamento.
 
 ## Estrutura
 - `index.html`: site público
-- `styles.css`: layout desktop/mobile
-- `app.js`: galeria + fluxo de agendamento
-- `admin.html`, `admin.css`, `admin.js`: painel administrativo existente
-- `schema.sql`: estrutura Supabase existente
+- `styles.css`: layout desktop/mobile + estados de seleção múltipla
+- `app.js`: galeria + seleção múltipla + fluxo de agendamento
+- `admin.html`, `admin.css`, `admin.js`: painel administrativo (compatível com reservas de múltiplos serviços no modo local)
+- `schema.sql`: estrutura Supabase com `appointment_services`, totais e proteção de colisão por intervalo
 
-## Observações
-- O site público não expõe dados de clientes.
-- O fluxo de agendamento do frontend continua usando `localStorage` enquanto um projeto Supabase real não estiver configurado no frontend.
-- O número real de WhatsApp não foi fornecido no material do projeto; os botões de WhatsApp ficam sem destino real em vez de inventar um número.
+## Seleção múltipla
+A seção **Escolha seu estilo** permite marcar mais de um serviço, calcula o total e leva a seleção para o agendamento. O fluxo interno usa a mesma seleção.
+
+O modo local grava em `localStorage` e também bloqueia intervalos inteiros conforme a duração total. Reservas antigas de um único serviço continuam compatíveis.
+
+## Supabase
+O frontend ainda usa `localStorage` enquanto as credenciais/URL reais do projeto Supabase não estiverem configuradas no código. O `schema.sql` já prepara o modelo de produção para múltiplos serviços e cria o RPC `book_appointment_multi` com validação de sobreposição no banco.
+
+Antes de publicar em produção, confirme no Supabase as **durações reais** de cada serviço e os horários de funcionamento. Nesta revisão, Corte usa 30 minutos e Luzes usa o exemplo explícito de 60 minutos; os demais mantêm o padrão atual de 30 minutos até serem confirmados.
+
+## Privacidade
+O site público não lista dados de clientes. O SQL não cria política pública de leitura para agendamentos nem para a relação de serviços de cada agendamento.

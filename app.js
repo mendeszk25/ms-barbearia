@@ -1,17 +1,19 @@
 const services = [
-  { name:'Corte', description:'Incluindo sobrancelha', price:20, icon:'i-scissors' },
-  { name:'Barba', description:'', price:15, icon:'i-beard' },
-  { name:'Combo', description:'Corte + barba', price:30, icon:'i-crown' },
-  { name:'Pigmentação', description:'', price:15, icon:'i-bottle' },
-  { name:'Relaxamento', description:'Dependendo do tamanho', price:10, icon:'i-wave' },
-  { name:'Pezinho', description:'', price:10, icon:'i-razor' },
-  { name:'Luzes', description:'', price:60, icon:'i-spark' },
-  { name:'Nevou', description:'Dependendo do tamanho', price:80, icon:'i-snow' }
+  { name:'Corte', description:'Incluindo sobrancelha', price:20, duration:30, icon:'i-scissors' },
+  { name:'Barba', description:'', price:15, duration:30, icon:'i-beard' },
+  { name:'Combo', description:'Corte + barba', price:30, duration:30, icon:'i-crown' },
+  { name:'Pigmentação', description:'', price:15, duration:30, icon:'i-bottle' },
+  { name:'Relaxamento', description:'Dependendo do tamanho', price:10, duration:30, icon:'i-wave' },
+  { name:'Pezinho', description:'', price:10, duration:30, icon:'i-razor' },
+  { name:'Luzes', description:'', price:60, duration:60, icon:'i-spark' },
+  { name:'Nevou', description:'Dependendo do tamanho', price:80, duration:30, icon:'i-snow' }
 ];
 const galleryFiles = [7,1,2,3,12,5,9,10];
 const money = n => `R$ ${Number(n).toFixed(0)}`;
+const timeSlots=['09:00','09:30','10:00','10:30','11:00','11:30','14:00','14:30','15:00','15:30','16:00','16:30','17:00'];
 const serviceList = document.querySelector('#serviceList');
-serviceList.innerHTML = services.map((s,i)=>`<article class="service-cell editorial-service" tabindex="0" role="button" data-service="${i}" aria-label="Agendar ${s.name} por ${money(s.price)}"><span class="service-number">${String(i+1).padStart(2,'0')}</span><div class="service-icon"><svg><use href="#${s.icon}"/></svg></div><div class="service-main"><strong>${s.name}</strong>${s.description?`<small>${s.description}</small>`:'<small>MS BARBEARIA</small>'}</div><b class="service-price">${money(s.price)}</b><span class="service-go"><svg><use href="#i-arrow"/></svg></span></article>`).join('');
+serviceList.innerHTML = services.map((s,i)=>`<article class="service-cell editorial-service" tabindex="0" role="button" data-service="${i}" aria-pressed="false" aria-label="Selecionar ${s.name} por ${money(s.price)}"><span class="service-number">${String(i+1).padStart(2,'0')}</span><div class="service-icon"><svg><use href="#${s.icon}"/></svg></div><div class="service-main"><strong>${s.name}</strong>${s.description?`<small>${s.description}</small>`:'<small>MS BARBEARIA</small>'}</div><b class="service-price">${money(s.price)}</b><span class="service-go" aria-hidden="true"><svg><use href="#i-arrow"/></svg></span></article>`).join('');
+serviceList.insertAdjacentHTML('afterend',`<div class="service-selection-summary" id="serviceSelectionSummary" hidden aria-live="polite"><div class="service-selection-copy"><span id="serviceSelectionCount">0 SERVIÇOS SELECIONADOS</span><strong id="serviceSelectionNames">Escolha seus serviços</strong></div><div class="service-selection-total"><small>TOTAL</small><b id="serviceSelectionTotal">R$ 0</b></div><button class="button button-primary service-selection-continue" id="serviceSelectionContinue" type="button" disabled>Continuar para agendamento <svg class="arrow"><use href="#i-arrow"/></svg></button></div>`);
 
 const gallery = document.querySelector('#gallery');
 gallery.innerHTML = galleryFiles.map((n,i)=>`<button class="cut-thumb portfolio-item item-${i+1}" type="button" data-photo="assets/cut-${n}.jpg" aria-label="Ampliar corte"><img src="assets/cut-${n}.jpg" alt="Corte realizado pela MS Barbearia" loading="lazy" decoding="async"><span>${String(i+1).padStart(2,'0')}</span></button>`).join('');
@@ -36,43 +38,102 @@ menuToggle.addEventListener('click',()=>setMobileMenu(!mobileMenu.classList.cont
 mobileMenu.querySelectorAll('a,button').forEach(el=>el.addEventListener('click',()=>setMobileMenu(false)));
 
 const bookingModal=document.querySelector('#bookingModal');
-document.querySelectorAll('[data-open-booking]').forEach(el=>el.addEventListener('click',()=>{if(!bookingModal.open)bookingModal.showModal();render()}));
-document.querySelector('#bookingClose').addEventListener('click',()=>bookingModal.close());
+document.querySelectorAll('[data-open-booking]').forEach(el=>el.addEventListener('click',()=>{state.step=1;if(!bookingModal.open)bookingModal.showModal();render()}));
+document.querySelector('#bookingClose').addEventListener('click',()=>{bookingModal.close();if(state.confirmed){state={step:1,services:[],date:null,time:null,name:'',phone:'',confirmed:false};updateServiceSelectionUI()}});
 bookingModal.addEventListener('click',e=>{if(e.target===bookingModal)bookingModal.close()});
 document.querySelectorAll('.whatsapp-link').forEach(el=>el.addEventListener('click',()=>alert('O número de WhatsApp ainda não foi configurado no projeto.')));
 
-let state={step:1,service:null,date:null,time:null,name:'',phone:'',confirmed:false};
+let state={step:1,services:[],date:null,time:null,name:'',phone:'',confirmed:false};
 const wb=document.querySelector('#wizardBody'), nextBtn=document.querySelector('#nextBtn'), backBtn=document.querySelector('#backBtn'), progress=document.querySelector('#bookingProgress'), summary=document.querySelector('#bookingSummary');
-const stepNames=['Serviço','Data','Horário','Seus dados','Confirmar'];
+const serviceSelectionSummary=document.querySelector('#serviceSelectionSummary'),serviceSelectionContinue=document.querySelector('#serviceSelectionContinue');
+const stepNames=['Serviços','Data','Horário','Seus dados','Confirmar'];
 function ymdLocal(date){const y=date.getFullYear(),m=String(date.getMonth()+1).padStart(2,'0'),d=String(date.getDate()).padStart(2,'0');return `${y}-${m}-${d}`}
 function getDates(){return Array.from({length:7},(_,i)=>{const d=new Date();d.setHours(12,0,0,0);d.setDate(d.getDate()+i);return d})}
-function bookedSlots(date){return JSON.parse(localStorage.getItem('ms-bookings')||'[]').filter(x=>x.date===date&&x.status!=='cancelled').map(x=>x.time)}
 function blockedSlots(date){return JSON.parse(localStorage.getItem('ms-blocked-slots')||'[]').filter(x=>x.date===date).map(x=>x.time)}
 function isBlockedDate(date){return JSON.parse(localStorage.getItem('ms-blocked-dates')||'[]').some(x=>x.date===date)}
 function dateLabel(date){return new Date(`${date}T12:00:00`).toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long'})}
-function escapeHTML(str=''){return str.replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#039;','"':'&quot;'}[c]))}
+function escapeHTML(str=''){return String(str).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#039;','"':'&quot;'}[c]))}
+function totalPrice(){return state.services.reduce((sum,i)=>sum+services[i].price,0)}
+function totalDuration(){return state.services.reduce((sum,i)=>sum+services[i].duration,0)}
+function serviceNames(){return state.services.map(i=>services[i].name)}
+function durationLabel(minutes){const h=Math.floor(minutes/60),m=minutes%60;if(h&&m)return `${h}h${String(m).padStart(2,'0')}`;if(h)return `${h}h`;return `${m} min`}
+function timeToMinutes(t){const [h,m]=t.split(':').map(Number);return h*60+m}
+function minutesToTime(n){return `${String(Math.floor(n/60)).padStart(2,'0')}:${String(n%60).padStart(2,'0')}`}
+function rangesOverlap(aStart,aEnd,bStart,bEnd){return aStart<bEnd&&aEnd>bStart}
+function bookingServices(b){if(Array.isArray(b.services)&&b.services.length)return b.services;if(Number.isInteger(b.service))return [b.service];return []}
+function bookingDuration(b){if(Number(b.totalDurationMinutes)>0)return Number(b.totalDurationMinutes);const indexes=bookingServices(b);return indexes.length?indexes.reduce((sum,i)=>sum+(services[i]?.duration||30),0):30}
+function bookingEndTime(b){return minutesToTime(timeToMinutes(b.time)+bookingDuration(b))}
+function bookingCollides(date,time,duration=totalDuration()){
+  if(!date||!time||!duration)return false;
+  if(isBlockedDate(date))return true;
+  const start=timeToMinutes(time),end=start+duration;
+  const required=[];for(let m=start;m<end;m+=30)required.push(minutesToTime(m));
+  if(required.some(t=>!timeSlots.includes(t)))return true;
+  const bookings=JSON.parse(localStorage.getItem('ms-bookings')||'[]').filter(x=>x.date===date&&x.status!=='cancelled');
+  if(bookings.some(b=>{const bs=timeToMinutes(b.time),be=bs+bookingDuration(b);return rangesOverlap(start,end,bs,be)}))return true;
+  if(blockedSlots(date).some(t=>rangesOverlap(start,end,timeToMinutes(t),timeToMinutes(t)+30)))return true;
+  return false;
+}
+function comboConflict(index){
+  const combo=2,corte=0,barba=1;
+  if(index===combo&&(state.services.includes(corte)||state.services.includes(barba)))return 'O Combo já inclui Corte + Barba. Remova Corte/Barba antes de selecionar o Combo.';
+  if((index===corte||index===barba)&&state.services.includes(combo))return 'O Combo já inclui Corte + Barba. Remova o Combo antes de selecionar este serviço.';
+  return '';
+}
+function toggleService(index,{notify=true}={}){
+  const pos=state.services.indexOf(index);
+  if(pos>=0){state.services.splice(pos,1)}else{
+    const conflict=comboConflict(index);if(conflict){if(notify)alert(conflict);return false}
+    state.services.push(index);state.services.sort((a,b)=>a-b);
+  }
+  if(!state.services.length){state.date=null;state.time=null}else if(state.time&&bookingCollides(state.date,state.time)){state.time=null}
+  updateServiceSelectionUI();
+  return true;
+}
+function updateServiceSelectionUI(){
+  const selected=new Set(state.services);
+  document.querySelectorAll('.service-cell').forEach(el=>{
+    const i=Number(el.dataset.service),on=selected.has(i);el.classList.toggle('selected',on);el.setAttribute('aria-pressed',String(on));
+    el.setAttribute('aria-label',`${on?'Remover':'Selecionar'} ${services[i].name}, ${money(services[i].price)}`);
+    const use=el.querySelector('.service-go use');if(use)use.setAttribute('href',on?'#i-check':'#i-arrow');
+  });
+  const has=state.services.length>0;serviceSelectionSummary.hidden=!has;serviceSelectionContinue.disabled=!has;
+  document.querySelector('#serviceSelectionCount').textContent=`${state.services.length} ${state.services.length===1?'SERVIÇO SELECIONADO':'SERVIÇOS SELECIONADOS'}`;
+  document.querySelector('#serviceSelectionNames').textContent=has?serviceNames().join(' + '):'Escolha seus serviços';
+  document.querySelector('#serviceSelectionTotal').textContent=money(totalPrice());
+}
 function renderProgress(){progress.innerHTML=stepNames.map((name,i)=>`<div class="progress-item ${i+1<=state.step?'active':''}"><span>0${i+1}</span>${name}</div>`).join('')}
 function renderSummary(){
-  if(state.service===null){summary.innerHTML='<span class="eyebrow">SEU AGENDAMENTO</span><p>Suas escolhas aparecem aqui.</p>';return}
-  const s=services[state.service]; summary.innerHTML=`<span class="eyebrow">SEU AGENDAMENTO</span><div class="summary-service"><strong>${s.name}</strong><b>${money(s.price)}</b></div>${state.date?`<div class="summary-detail"><span>Dia</span><b>${dateLabel(state.date)}</b></div>`:''}${state.time?`<div class="summary-detail"><span>Horário</span><b>${state.time}</b></div>`:''}${state.name?`<div class="summary-detail"><span>Nome</span><b>${escapeHTML(state.name)}</b></div>`:''}<div class="summary-number">0${Math.min(state.step,5)}</div>`;
+  if(!state.services.length){summary.innerHTML='<span class="eyebrow">SEU AGENDAMENTO</span><p>Suas escolhas aparecem aqui.</p>';return}
+  summary.innerHTML=`<span class="eyebrow">SEU AGENDAMENTO</span><div class="summary-service summary-service-multi"><strong>${escapeHTML(serviceNames().join(' + '))}</strong><b>${money(totalPrice())}</b></div><div class="summary-detail"><span>Duração estimada</span><b>${durationLabel(totalDuration())}</b></div>${state.date?`<div class="summary-detail"><span>Dia</span><b>${dateLabel(state.date)}</b></div>`:''}${state.time?`<div class="summary-detail"><span>Horário</span><b>${state.time}–${minutesToTime(timeToMinutes(state.time)+totalDuration())}</b></div>`:''}${state.name?`<div class="summary-detail"><span>Nome</span><b>${escapeHTML(state.name)}</b></div>`:''}<div class="summary-number">0${Math.min(state.step,5)}</div>`;
 }
+function wizardServiceRow(s,i){const selected=state.services.includes(i),comboSelected=state.services.includes(2),disabled=(comboSelected&&(i===0||i===1))||(i===2&&(state.services.includes(0)||state.services.includes(1)));return `<button class="choice-row ${selected?'selected':''}" aria-pressed="${selected}" data-kind="service" data-value="${i}" ${disabled&&!selected?'disabled':''}><span><strong>${s.name}${selected?' ✓':''}</strong><small>${s.description||'MS BARBEARIA'}</small></span><b>${money(s.price)}</b></button>`}
 function render(){
-  renderProgress();renderSummary();backBtn.hidden=state.step===1||state.step===6;nextBtn.hidden=state.step===6;nextBtn.disabled=false;nextBtn.innerHTML='Continuar <svg class="arrow"><use href="#i-arrow"/></svg>';
-  if(state.step===1)wb.innerHTML=`<span class="wizard-eyebrow">ETAPA 01 / 05</span><h3>ESCOLHA SEU SERVIÇO</h3><div class="choice-list">${services.map((s,i)=>`<button class="choice-row ${state.service===i?'selected':''}" data-kind="service" data-value="${i}"><span><strong>${s.name}</strong><small>${s.description}</small></span><b>${money(s.price)}</b></button>`).join('')}</div>`;
+  renderProgress();renderSummary();updateServiceSelectionUI();backBtn.hidden=state.step===1||state.step===6;nextBtn.hidden=state.step===6;nextBtn.disabled=false;nextBtn.innerHTML='Continuar <svg class="arrow"><use href="#i-arrow"/></svg>';
+  if(state.step===1){const suggest=state.services.includes(0)&&state.services.includes(1)&&!state.services.includes(2)?'<p class="combo-suggestion">Corte + Barba selecionados. O Combo custa R$ 30; troque manualmente se preferir.</p>':'';wb.innerHTML=`<span class="wizard-eyebrow">ETAPA 01 / 05</span><h3>ESCOLHA SEUS SERVIÇOS</h3><div class="choice-list">${services.map(wizardServiceRow).join('')}</div>${suggest}<div class="wizard-selection-total"><span>${state.services.length} ${state.services.length===1?'serviço':'serviços'}</span><b>${money(totalPrice())}</b></div>`}
   if(state.step===2)wb.innerHTML=`<span class="wizard-eyebrow">ETAPA 02 / 05</span><h3>ESCOLHA O DIA</h3><div class="date-grid">${getDates().map((d,i)=>{const value=ymdLocal(d),blocked=isBlockedDate(value),top=i===0?'Hoje':i===1?'Amanhã':d.toLocaleDateString('pt-BR',{weekday:'short'}).replace('.','');return `<button class="date-option ${state.date===value?'selected':''}" data-kind="date" data-value="${value}" ${blocked?'disabled':''}><small>${top}</small><strong>${String(d.getDate()).padStart(2,'0')}</strong><small>${d.toLocaleDateString('pt-BR',{month:'short'}).replace('.','')}</small></button>`}).join('')}</div>`;
-  if(state.step===3){const times=['09:00','09:30','10:00','10:30','11:00','11:30','14:00','14:30','15:00','15:30','16:00','16:30','17:00'],unavailable=[...bookedSlots(state.date),...blockedSlots(state.date)];wb.innerHTML=`<span class="wizard-eyebrow">ETAPA 03 / 05</span><h3>QUAL HORÁRIO?</h3><div class="time-grid">${times.map(t=>`<button class="time-option ${state.time===t?'selected':''}" data-kind="time" data-value="${t}" ${unavailable.includes(t)?'disabled':''}>${t}</button>`).join('')}</div>`}
+  if(state.step===3){wb.innerHTML=`<span class="wizard-eyebrow">ETAPA 03 / 05</span><h3>QUAL HORÁRIO?</h3><p class="slot-duration-note">Duração estimada: <strong>${durationLabel(totalDuration())}</strong>. Os horários ocupados durante todo o intervalo ficam indisponíveis.</p><div class="time-grid">${timeSlots.map(t=>`<button class="time-option ${state.time===t?'selected':''}" data-kind="time" data-value="${t}" ${bookingCollides(state.date,t)?'disabled':''}>${t}</button>`).join('')}</div>`}
   if(state.step===4)wb.innerHTML=`<span class="wizard-eyebrow">ETAPA 04 / 05</span><h3>SEUS DADOS</h3><div class="form-grid"><label class="field">Nome<input id="customerName" value="${escapeHTML(state.name)}" autocomplete="name" placeholder="Seu nome"></label><label class="field">WhatsApp<input id="customerPhone" value="${escapeHTML(state.phone)}" inputmode="tel" autocomplete="tel" placeholder="(81) 9 0000-0000"></label></div>`;
-  if(state.step===5){const s=services[state.service];wb.innerHTML=`<span class="wizard-eyebrow">ETAPA 05 / 05</span><h3>CONFIRME SEU HORÁRIO</h3><div class="confirmation"><div class="confirmation-row"><span>Serviço</span><b>${s.name}</b></div><div class="confirmation-row"><span>Preço</span><b>${money(s.price)}</b></div><div class="confirmation-row"><span>Data</span><b>${dateLabel(state.date)}</b></div><div class="confirmation-row"><span>Horário</span><b>${state.time}</b></div><div class="confirmation-row"><span>Nome</span><b>${escapeHTML(state.name)}</b></div><div class="confirmation-row"><span>WhatsApp</span><b>${escapeHTML(state.phone)}</b></div></div>`;nextBtn.textContent='Confirmar agendamento'}
-  if(state.step===6)wb.innerHTML=`<div class="success-mark"><svg><use href="#i-check"/></svg></div><span class="wizard-eyebrow">HORÁRIO REGISTRADO</span><h3>AGENDAMENTO CONFIRMADO</h3><p style="color:#8d969f;max-width:480px;line-height:1.6">${services[state.service].name} · ${dateLabel(state.date)} às ${state.time}.</p><div class="success-actions"><button class="button button-outline" type="button" id="calendarBtn">Adicionar ao calendário</button><a class="button button-primary" href="https://instagram.com/msbarbearia.oficiall" target="_blank" rel="noreferrer">Instagram</a></div>`;
-  document.querySelectorAll('[data-kind]').forEach(btn=>btn.addEventListener('click',()=>{const kind=btn.dataset.kind,value=btn.dataset.value;if(kind==='service')state.service=Number(value);if(kind==='date'){state.date=value;state.time=null}if(kind==='time')state.time=value;render()}));
+  if(state.step===5)wb.innerHTML=`<span class="wizard-eyebrow">ETAPA 05 / 05</span><h3>CONFIRME SEU HORÁRIO</h3><div class="confirmation"><div class="confirmation-row"><span>Serviços</span><b>${escapeHTML(serviceNames().join(' + '))}</b></div><div class="confirmation-row"><span>Preço total</span><b>${money(totalPrice())}</b></div><div class="confirmation-row"><span>Duração estimada</span><b>${durationLabel(totalDuration())}</b></div><div class="confirmation-row"><span>Data</span><b>${dateLabel(state.date)}</b></div><div class="confirmation-row"><span>Horário</span><b>${state.time}–${minutesToTime(timeToMinutes(state.time)+totalDuration())}</b></div><div class="confirmation-row"><span>Nome</span><b>${escapeHTML(state.name)}</b></div><div class="confirmation-row"><span>WhatsApp</span><b>${escapeHTML(state.phone)}</b></div></div>`;nextBtn.textContent='Confirmar agendamento';
+  if(state.step===6)wb.innerHTML=`<div class="success-mark"><svg><use href="#i-check"/></svg></div><span class="wizard-eyebrow">HORÁRIO REGISTRADO</span><h3>AGENDAMENTO CONFIRMADO</h3><p style="color:#8d969f;max-width:520px;line-height:1.6">${escapeHTML(serviceNames().join(' + '))} · ${dateLabel(state.date)} às ${state.time} · ${money(totalPrice())}.</p><div class="success-actions"><button class="button button-outline" type="button" id="calendarBtn">Adicionar ao calendário</button><a class="button button-primary" href="https://instagram.com/msbarbearia.oficiall" target="_blank" rel="noreferrer">Instagram</a></div>`;
+  document.querySelectorAll('[data-kind]').forEach(btn=>btn.addEventListener('click',()=>{const kind=btn.dataset.kind,value=btn.dataset.value;if(kind==='service'){toggleService(Number(value));render();return}if(kind==='date'){state.date=value;state.time=null}if(kind==='time')state.time=value;render()}));
   document.querySelector('#calendarBtn')?.addEventListener('click',downloadCalendar);
 }
-function goNext(){if(state.step===1&&state.service===null)return alert('Escolha um serviço.');if(state.step===2&&!state.date)return alert('Escolha um dia.');if(state.step===3&&!state.time)return alert('Escolha um horário.');if(state.step===4){state.name=document.querySelector('#customerName').value.trim();state.phone=document.querySelector('#customerPhone').value.trim();if(!state.name||!state.phone)return alert('Informe nome e WhatsApp.')}if(state.step===5){nextBtn.disabled=true;nextBtn.textContent='Validando horário...';setTimeout(()=>{const bookings=JSON.parse(localStorage.getItem('ms-bookings')||'[]'),collision=bookings.some(x=>x.date===state.date&&x.time===state.time&&x.status!=='cancelled')||blockedSlots(state.date).includes(state.time)||isBlockedDate(state.date);if(collision){alert('Esse horário acabou de ser reservado. Escolha outro horário.');state.step=3;state.time=null;render();return}bookings.push({...state,status:'confirmed',createdAt:new Date().toISOString()});localStorage.setItem('ms-bookings',JSON.stringify(bookings));state.step=6;state.confirmed=true;render()},350);return}state.step++;render()}
+function goNext(){
+  if(state.step===1&&!state.services.length)return alert('Escolha pelo menos um serviço.');
+  if(state.step===2&&!state.date)return alert('Escolha um dia.');
+  if(state.step===3&&!state.time)return alert('Escolha um horário.');
+  if(state.step===4){state.name=document.querySelector('#customerName').value.trim();state.phone=document.querySelector('#customerPhone').value.trim();if(!state.name||!state.phone)return alert('Informe nome e WhatsApp.')}
+  if(state.step===5){nextBtn.disabled=true;nextBtn.textContent='Validando horário...';setTimeout(()=>{if(bookingCollides(state.date,state.time,totalDuration())){alert('Esse horário acabou de ser reservado. Escolha outro horário.');state.step=3;state.time=null;render();return}const bookings=JSON.parse(localStorage.getItem('ms-bookings')||'[]');bookings.push({name:state.name,phone:state.phone,date:state.date,time:state.time,services:[...state.services],service:state.services[0],totalPrice:totalPrice(),totalDurationMinutes:totalDuration(),endTime:minutesToTime(timeToMinutes(state.time)+totalDuration()),status:'confirmed',createdAt:new Date().toISOString()});localStorage.setItem('ms-bookings',JSON.stringify(bookings));state.step=6;state.confirmed=true;render()},350);return}
+  state.step++;render();
+}
 nextBtn.addEventListener('click',goNext);backBtn.addEventListener('click',()=>{if(state.step>1){state.step--;render()}});
-function chooseService(index){state.service=index;state.step=2;render();if(!bookingModal.open)bookingModal.showModal()}
-document.querySelectorAll('.service-cell').forEach(el=>{el.addEventListener('click',()=>chooseService(Number(el.dataset.service)));el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();chooseService(Number(el.dataset.service))}})});
-function downloadCalendar(){const s=services[state.service],start=`${state.date.replaceAll('-','')}T${state.time.replace(':','')}00`,endDate=new Date(`${state.date}T${state.time}:00`);endDate.setMinutes(endDate.getMinutes()+30);const end=`${ymdLocal(endDate).replaceAll('-','')}T${String(endDate.getHours()).padStart(2,'0')}${String(endDate.getMinutes()).padStart(2,'0')}00`,ics=`BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//MS Barbearia//Agendamento//PT-BR\nBEGIN:VEVENT\nDTSTART:${start}\nDTEND:${end}\nSUMMARY:MS Barbearia — ${s.name}\nLOCATION:Gravatá - PE\nEND:VEVENT\nEND:VCALENDAR`;const blob=new Blob([ics],{type:'text/calendar'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='ms-barbearia-agendamento.ics';a.click();URL.revokeObjectURL(url)}
-render();
+function handleServiceCell(index){toggleService(index)}
+document.querySelectorAll('.service-cell').forEach(el=>{el.addEventListener('click',()=>handleServiceCell(Number(el.dataset.service)));el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();handleServiceCell(Number(el.dataset.service))}})});
+serviceSelectionContinue.addEventListener('click',()=>{if(!state.services.length)return;state.step=1;if(!bookingModal.open)bookingModal.showModal();render()});
+function downloadCalendar(){const start=`${state.date.replaceAll('-','')}T${state.time.replace(':','')}00`,endDate=new Date(`${state.date}T${state.time}:00`);endDate.setMinutes(endDate.getMinutes()+totalDuration());const end=`${ymdLocal(endDate).replaceAll('-','')}T${String(endDate.getHours()).padStart(2,'0')}${String(endDate.getMinutes()).padStart(2,'0')}00`,ics=`BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//MS Barbearia//Agendamento//PT-BR\nBEGIN:VEVENT\nDTSTART:${start}\nDTEND:${end}\nSUMMARY:MS Barbearia — ${serviceNames().join(' + ')}\nDESCRIPTION:Serviços: ${serviceNames().join(', ')}. Total: ${money(totalPrice())}.\nLOCATION:Gravatá - PE\nEND:VEVENT\nEND:VCALENDAR`;const blob=new Blob([ics],{type:'text/calendar'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='ms-barbearia-agendamento.ics';a.click();URL.revokeObjectURL(url)}
+updateServiceSelectionUI();render();
+
 
 
 /* Motion system: editorial, restrained and performance-first. */
