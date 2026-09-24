@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#05070a">
+  <meta name="description" content="MS Barbearia em Gravatá-PE. Cortes, barba e agendamento online.">
+  <title>MS Barbearia — Gravatá-PE</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=Permanent+Marker&display=swap" rel="stylesheet">
+  <link rel="preload" as="image" href="assets/hero-expanded-clean.jpg" media="(min-width:821px)">
+  <link rel="preload" as="image" href="assets/hero-expanded-clean.jpg" media="(max-width:820px)">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <svg class="svg-defs" aria-hidden="true" width="0" height="0">
+    <symbol id="i-calendar" viewBox="0 0 24 24"><path d="M7 2v3M17 2v3M3.5 9h17M5.5 4h13a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M14 7l5 5-5 5"/></symbol>
+    <symbol id="i-instagram" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><path d="M17.5 6.5h.01"/></symbol>
+    <symbol id="i-whatsapp" viewBox="0 0 24 24"><path d="M20.5 11.6a8.4 8.4 0 0 1-12.4 7.4L4 20l1.1-4a8.4 8.4 0 1 1 15.4-4.4Z"/><path d="M8.5 8c.3-.6.6-.6.9-.6h.4c.2 0 .4.1.5.4l.8 1.8c.1.3.1.5-.1.7l-.6.7c-.2.2-.2.4 0 .7.5.8 1.2 1.5 2 2 .3.2.5.2.7 0l.8-1c.2-.2.4-.3.7-.2l1.8.8c.3.1.4.3.4.5 0 .4-.2 1.2-.8 1.7-.6.5-1.4.8-2.3.6-1.1-.2-2.7-.9-4.5-2.5-1.5-1.4-2.5-3.1-2.8-4.2-.2-.8-.1-1.4.1-1.8Z"/></symbol>
+    <symbol id="i-scissors" viewBox="0 0 24 24"><circle cx="6" cy="7" r="3"/><circle cx="6" cy="17" r="3"/><path d="m8.5 8.5 12 8.5M8.5 15.5 20.5 7"/></symbol>
+    <symbol id="i-crown" viewBox="0 0 24 24"><path d="m3 7 4 4 5-7 5 7 4-4-2 11H5L3 7Z"/><path d="M5 21h14"/></symbol>
+    <symbol id="i-beard" viewBox="0 0 24 24"><path d="M6 8c0 7 1.5 11 6 13 4.5-2 6-6 6-13-1 2-3 3-6 3S7 10 6 8Z"/><path d="M9 7c.4-2 1.3-3 3-3s2.6 1 3 3"/></symbol>
+    <symbol id="i-bottle" viewBox="0 0 24 24"><path d="M9 2h6v4l2 2v13H7V8l2-2V2Z"/><path d="M9 11h8"/></symbol>
+    <symbol id="i-wave" viewBox="0 0 24 24"><path d="M2 8c2-2 4-2 6 0s4 2 6 0 4-2 8 0M2 16c2-2 4-2 6 0s4 2 6 0 4-2 8 0"/></symbol>
+    <symbol id="i-razor" viewBox="0 0 24 24"><path d="m4 20 9-9M11 5l8 8M13 3l8 8-3 3-8-8 3-3ZM2 22l5-1-4-4-1 5Z"/></symbol>
+    <symbol id="i-spark" viewBox="0 0 24 24"><path d="m12 2 1.7 5.3L19 9l-5.3 1.7L12 16l-1.7-5.3L5 9l5.3-1.7L12 2ZM19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8L19 15Z"/></symbol>
+    <symbol id="i-snow" viewBox="0 0 24 24"><path d="M12 2v20M4 7l16 10M4 17 20 7M9 4l3 3 3-3M9 20l3-3 3 3M3 10l4 1-1-4M18 17l-1-4 4 1M3 14l4-1-1 4M18 7l-1 4 4-1"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="m3 11 9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1v-9Z"/></symbol>
+    <symbol id="i-chair" viewBox="0 0 24 24"><path d="M5 13V9a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v4"/><path d="M3 13h18v5H3z"/><path d="M6 18v3M18 18v3"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c.3-4.2 2.4-6.3 6-6.3s5.7 2.1 6 6.3"/><path d="M14.5 14.5c.7-.5 1.6-.8 2.7-.8 2.7 0 4.2 1.8 4.5 5.3"/></symbol>
+  </svg>
+
+  <header class="site-header" id="siteHeader">
+    <div class="header-inner">
+      <a class="brand" href="#inicio" aria-label="MS Barbearia — início"><img src="assets/logo.png" alt="MS Barbearia"></a>
+      <nav class="desktop-nav" aria-label="Navegação principal">
+        <a class="active" href="#inicio">Início</a>
+        <a href="#servicos">Serviços</a>
+        <a href="#trabalhos">Trabalhos</a>
+        <button type="button" data-open-booking>Agendamento</button>
+        <a href="#localizacao">Localização</a>
+      </nav>
+      <div class="header-actions">
+        <button class="button button-primary header-book" type="button" data-open-booking><svg><use href="#i-calendar"/></svg> Agendar horário</button>
+        <span class="header-separator"></span>
+        <a class="icon-link" href="https://instagram.com/msbarbearia.oficiall" target="_blank" rel="noreferrer" aria-label="Instagram"><svg><use href="#i-instagram"/></svg></a>
+        <button class="icon-link whatsapp-link" type="button" aria-label="WhatsApp" title="WhatsApp ainda não configurado"><svg><use href="#i-whatsapp"/></svg></button>
+        <button class="mobile-book-icon" type="button" data-open-booking aria-label="Agendar horário"><svg><use href="#i-calendar"/></svg></button>
+        <button class="mobile-menu-toggle" id="mobileMenuToggle" type="button" aria-label="Abrir menu"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="#inicio">Início</a><a href="#servicos">Serviços</a><a href="#trabalhos">Trabalhos</a><button type="button" data-open-booking>Agendamento</button><a href="#localizacao">Localização</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" id="inicio">
+      <div class="hero-media" aria-hidden="true"><picture><source media="(max-width:820px)" srcset="assets/hero-expanded-clean.jpg"><img src="assets/hero-expanded-clean.jpg" alt=""></picture></div>
+      <div class="hero-overlay" aria-hidden="true"></div>
+      <div class="hero-vertical hero-vertical-left" aria-hidden="true"><span>MAIS QUE UM CORTE</span><span>É CONFIANÇA</span><i></i></div>
+      <div class="hero-vertical hero-vertical-right" aria-hidden="true"><span>GRAVATÁ · PE</span><span>MS BARBEARIA</span><span>DESDE O PRIMEIRO CORTE</span></div>
+      <div class="hero-scribble" aria-hidden="true"><span>DISCIPLINA</span><span>TAMBÉM CORTA</span><strong>ESTILO</strong></div>
+      <div class="hero-content shell">
+        <p class="eyebrow">MS BARBEARIA <b>•</b> GRAVATÁ-PE</p>
+        <h1><span class="hero-title-line">SEU CORTE.</span><span class="hero-title-line hero-title-accent"><em>SEU ESTILO.</em></span></h1>
+        <div class="hero-values" aria-label="Valores da marca"><span>TRADIÇÃO</span><i></i><span>QUALIDADE</span><i></i><span>RESPEITO</span></div>
+        <div class="hero-actions">
+          <button class="button button-primary" type="button" data-open-booking><svg><use href="#i-calendar"/></svg> Agendar horário <svg class="arrow"><use href="#i-arrow"/></svg></button>
+          <a class="button button-outline" href="#trabalhos"><svg><use href="#i-scissors"/></svg> Ver cortes</a>
+        </div>
+        <div class="hero-facts">
+          <div><svg><use href="#i-calendar"/></svg><span><b>Agendamento</b><small>online</small></span></div>
+          <div><svg><use href="#i-pin"/></svg><span><b>Gravatá-PE</b></span></div>
+          <div><svg><use href="#i-clock"/></svg><span><b>Domingo a domingo</b><small>sempre com você</small></span></div>
+        </div>
+      </div>
+      <div class="hero-right-note" aria-hidden="true"><span>CORTE</span><span>É ATITUDE</span><i></i></div>
+    </section>
+
+
+    <section class="services-editorial" id="servicos" aria-labelledby="servicesTitle">
+      <div class="post-shell">
+        <header class="section-intro services-intro">
+          <div class="section-kicker"><span>01</span><i></i><b>SERVIÇOS & PREÇOS</b></div>
+          <div class="section-heading-row">
+            <h2 id="servicesTitle">ESCOLHA<br><em>SEU ESTILO.</em></h2>
+            <p>Serviços diretos, preços claros e horário reservado para você.</p>
+          </div>
+        </header>
+        <div class="services-editorial-grid" id="serviceList"></div>
+      </div>
+    </section>
+
+    <section class="portfolio-section" id="trabalhos" aria-labelledby="cutsTitle">
+      <div class="post-shell portfolio-shell">
+        <header class="portfolio-header">
+          <div>
+            <div class="section-kicker"><span>02</span><i></i><b>TRABALHOS REAIS</b></div>
+            <h2 id="cutsTitle">CORTES<br><em>DA MS</em></h2>
+          </div>
+          <div class="portfolio-copy">
+            <p>Clientes reais. Resultados reais. Cada corte com identidade própria.</p>
+            <a href="https://instagram.com/msbarbearia.oficiall" target="_blank" rel="noreferrer">VER MAIS NO INSTAGRAM <svg><use href="#i-arrow"/></svg></a>
+          </div>
+        </header>
+        <div class="portfolio-grid" id="gallery"></div>
+        <div class="portfolio-foot" aria-hidden="true"><span>ESTILO EM CADA DETALHE</span><i></i><strong>MS / GRAVATÁ-PE</strong></div>
+      </div>
+    </section>
+
+    <section class="story-section story-section-v2" aria-labelledby="storyTitle">
+      <div class="post-shell story-v2-layout">
+        <div class="story-v2-visual">
+          <div class="story-v2-index" aria-hidden="true">03</div>
+          <div class="story-v2-index-label" aria-hidden="true">SOBRE<br>A MS</div>
+          <div class="story-v2-frame" aria-hidden="true"><i></i><i></i><i></i></div>
+          <span class="story-v2-vertical" aria-hidden="true">MS BARBEARIA</span>
+          <img class="story-v2-ghost" src="assets/barber-full-dark.jpg" alt="" aria-hidden="true">
+          <figure class="story-v2-photo">
+            <img src="assets/barber-full-dark.jpg" alt="Barbeiro da MS Barbearia" loading="lazy" decoding="async">
+          </figure>
+          <div class="story-v2-seal" aria-hidden="true">
+            <svg><use href="#i-crown"/></svg>
+            <span>MS BARBEARIA · GRAVATÁ-PE</span>
+          </div>
+          <div class="story-v2-micro" aria-hidden="true"><i></i><span>ESTILO<br>RESPEITO<br>IDENTIDADE</span></div>
+        </div>
+
+        <div class="story-v2-copy">
+          <div class="section-kicker"><span>03</span><i></i><b>SOBRE A MS</b></div>
+          <h2 id="storyTitle">MAIS QUE UM CORTE,<br><em>É CONFIANÇA.</em></h2>
+          <p>A MS Barbearia valoriza o seu estilo com cuidado, atenção e acabamento em cada detalhe.</p>
+
+          <div class="story-v2-values">
+            <div class="story-v2-value">
+              <span>01</span>
+              <svg aria-hidden="true"><use href="#i-calendar"/></svg>
+              <b>Atendimento<br>com horário</b>
+            </div>
+            <div class="story-v2-value">
+              <span>02</span>
+              <svg aria-hidden="true"><use href="#i-chair"/></svg>
+              <b>Ambiente<br>confortável</b>
+            </div>
+            <div class="story-v2-value">
+              <span>03</span>
+              <svg aria-hidden="true"><use href="#i-users"/></svg>
+              <b>Todos são<br>bem-vindos</b>
+            </div>
+          </div>
+
+          <div class="story-v2-bottom" aria-hidden="true"><i></i><span>ESTILO · RESPEITO · SEMPRE COM VOCÊ</span></div>
+        </div>
+
+        <div class="story-v2-side-note" aria-hidden="true"><i></i><span>CORTE<br>É IDENTIDADE</span></div>
+      </div>
+    </section>
+
+    <section class="appointment-cta" aria-labelledby="ctaTitle">
+      <div class="cta-media" aria-hidden="true"><img src="assets/hero.jpg" alt=""></div>
+      <div class="cta-shade" aria-hidden="true"></div>
+      <div class="post-shell cta-layout">
+        <div class="cta-copy">
+          <div class="section-kicker"><span>04</span><i></i><b>PRONTO PRO PRÓXIMO CORTE?</b></div>
+          <h2 id="ctaTitle">AGENDE SEU HORÁRIO<br><em>SEM COMPLICAÇÃO.</em></h2>
+        </div>
+        <div class="cta-action">
+          <p>Escolha serviço, dia e horário. Sem cadastro.</p>
+          <button class="button button-primary cta-button" type="button" data-open-booking><svg><use href="#i-calendar"/></svg> Agendar agora <svg class="arrow"><use href="#i-arrow"/></svg></button>
+          <small>RÁPIDO <i></i> SEGURO <i></i> ONLINE</small>
+        </div>
+      </div>
+    </section>
+
+    <section class="contact-section" id="localizacao" aria-labelledby="locationTitle">
+      <div class="post-shell contact-layout">
+        <div class="contact-copy">
+          <div class="section-kicker"><span>05</span><i></i><b>LOCALIZAÇÃO & REDES</b></div>
+          <h2 id="locationTitle">ONDE ESTAMOS<br><em>GRAVATÁ-PE</em></h2>
+          <p>Encontre a MS Barbearia em Gravatá e acompanhe os cortes pelo Instagram.</p>
+          <div class="contact-location"><svg><use href="#i-pin"/></svg><span><b>Gravatá · PE</b><small>Pernambuco</small></span></div>
+          <div class="contact-actions">
+            <a class="contact-action primary" href="https://www.google.com/maps/search/?api=1&query=MS%20Barbearia%20Gravat%C3%A1%20PE" target="_blank" rel="noreferrer">VER NO MAPA <svg><use href="#i-arrow"/></svg></a>
+            <a class="contact-action" href="https://instagram.com/msbarbearia.oficiall" target="_blank" rel="noreferrer"><svg><use href="#i-instagram"/></svg> INSTAGRAM</a>
+            <button class="contact-action whatsapp-link" type="button"><svg><use href="#i-whatsapp"/></svg> WHATSAPP</button>
+          </div>
+        </div>
+        <a class="editorial-map" href="https://www.google.com/maps/search/?api=1&query=MS%20Barbearia%20Gravat%C3%A1%20PE" target="_blank" rel="noreferrer" aria-label="Abrir MS Barbearia em Gravatá no mapa">
+          <span class="map-grid" aria-hidden="true"></span>
+          <span class="map-line map-line-a" aria-hidden="true"></span>
+          <span class="map-line map-line-b" aria-hidden="true"></span>
+          <span class="map-line map-line-c" aria-hidden="true"></span>
+          <div class="editorial-map-pin"><svg><use href="#i-pin"/></svg><b>MS BARBEARIA</b></div>
+          <strong>GRAVATÁ</strong>
+          <small>PERNAMBUCO · BRASIL</small>
+          <em>COMO CHEGAR →</em>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <img class="footer-logo-mobile" src="assets/logo.png" alt="MS Barbearia">
+    <div class="footer-brand"><b>MS BARBEARIA</b><i></i><span>GRAVATÁ-PE</span></div>
+    <nav><a href="#inicio">INÍCIO</a><a href="#servicos">SERVIÇOS</a><a href="#trabalhos">TRABALHOS</a><button type="button" data-open-booking>AGENDAMENTO</button><a href="#localizacao">LOCALIZAÇÃO</a></nav>
+    <div class="footer-attitude">CORTE É ATITUDE <i></i></div>
+    <div class="footer-social"><a href="https://instagram.com/msbarbearia.oficiall" target="_blank" rel="noreferrer" aria-label="Instagram"><svg><use href="#i-instagram"/></svg></a><button type="button" class="whatsapp-link" aria-label="WhatsApp"><svg><use href="#i-whatsapp"/></svg></button><i></i><span>© 2026 MS BARBEARIA<br>TODOS OS DIREITOS RESERVADOS</span></div>
+  </footer>
+
+  <nav class="bottom-nav" aria-label="Navegação mobile">
+    <a href="#inicio"><svg><use href="#i-home"/></svg><small>Início</small></a>
+    <a href="#servicos"><svg><use href="#i-scissors"/></svg><small>Serviços</small></a>
+    <button type="button" class="bottom-book" data-open-booking><span><svg><use href="#i-calendar"/></svg></span><small>Agendar</small></button>
+    <a href="#localizacao"><svg><use href="#i-pin"/></svg><small>Localização</small></a>
+    <a href="https://instagram.com/msbarbearia.oficiall" target="_blank" rel="noreferrer"><svg><use href="#i-instagram"/></svg><small>Instagram</small></a>
+  </nav>
+
+  <dialog class="booking-modal" id="bookingModal">
+    <div class="booking-modal-shell">
+      <button class="booking-close" id="bookingClose" type="button" aria-label="Fechar agendamento"><svg><use href="#i-close"/></svg></button>
+      <div class="booking-brand"><img src="assets/logo.png" alt="MS Barbearia"><div><span>AGENDE SEU HORÁRIO</span><strong>SEM COMPLICAÇÃO.</strong></div></div>
+      <div class="booking-progress" id="bookingProgress"></div>
+      <div class="booking-layout">
+        <section class="booking-stage">
+          <div id="wizardBody" class="wizard-body" aria-live="polite"></div>
+          <div class="wizard-actions"><button id="backBtn" class="button button-outline" type="button">Voltar</button><button id="nextBtn" class="button button-primary" type="button">Continuar <svg class="arrow"><use href="#i-arrow"/></svg></button></div>
+        </section>
+        <aside class="booking-summary" id="bookingSummary"><span class="eyebrow">SEU AGENDAMENTO</span><p>Suas escolhas aparecem aqui.</p></aside>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog class="lightbox" id="lightbox"><button type="button" id="lightboxClose" aria-label="Fechar foto"><svg><use href="#i-close"/></svg></button><img id="lightboxImage" alt=""></dialog>
+  <script src="app.js"></script>
+</body>
+</html>
